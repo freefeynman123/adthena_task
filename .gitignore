@@ -1,4 +1,9 @@
+# Custom
+data/
+
 # IDE
+.idea/
+.DS_STORE
 .vscode
 
 # Byte-compiled / optimized / DLL files
