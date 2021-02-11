@@ -6,6 +6,7 @@ src/adthena_task/data/
 *.zip
 lightning_logs/
 wandb/
+*.ckpt
 
 # IDE
 .idea/
