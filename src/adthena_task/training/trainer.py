@@ -1,23 +1,16 @@
 # flake8: noqa
-
 """Implements training class."""
-from argparse import ArgumentParser
 
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
-from pytorch_lightning.loggers.wandb import WandbLogger
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 from adthena_task.config import Config
 from adthena_task.models.bert import BertClassifier
-from adthena_task.training.datamodule import AdthenaDataModule
 from adthena_task.training.utils import calculate_accuracy
 
 config = Config()
-
-wandb_logger = WandbLogger(name="Adam-32-0.001", project="pytorchlightning")
 
 
 class Model(pl.LightningModule):
@@ -66,27 +59,3 @@ class Model(pl.LightningModule):
         self.log("val_loss", loss, on_step=False, on_epoch=True)
         self.log("val_acc", acc, on_step=False, on_epoch=True)
         return output
-
-
-if __name__ == "__main__":
-    early_stop_callback = EarlyStopping(
-        monitor="val_loss", min_delta=0.0, patience=5, verbose=True, mode="min"
-    )
-    model_checkpoint_callback = ModelCheckpoint(
-        filepath="../results", monitor="val_loss", save_top_k=3, save_weights_only=True
-    )
-
-    trainer = pl.Trainer(
-        gpus=0,
-        callbacks=[early_stop_callback, model_checkpoint_callback],
-        gradient_clip_val=config.GRADIENT_CLIP_VAL,
-        min_epochs=10,
-        logger=wandb_logger,
-    )
-
-    model = Model()
-    dm = AdthenaDataModule()
-    dm.setup()
-
-    trainer.fit(model, dm)
-    trainer.test()
