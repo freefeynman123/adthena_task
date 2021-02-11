@@ -1,5 +1,9 @@
 # Custom
 data/
+*.pth
+*.pt
+*.txt
+*.zip
 
 # IDE
 .idea/
