@@ -7,7 +7,9 @@ import pandas as pd
 import torch
 from transformers import BertTokenizer
 
-from adthena_task import config
+from adthena_task.config import Config
+
+config = Config()
 
 
 def text_preprocessing(text: str) -> str:
@@ -31,7 +33,7 @@ def text_preprocessing(text: str) -> str:
 
 
 def preprocessing_for_bert(
-    data: pd.DataFrame, tokenizer: BertTokenizer
+    data: pd.DataFrame, tokenizer: BertTokenizer = config.TOKENIZER
 ) -> Union[torch.Tensor, torch.Tensor]:
     """Preprocessing function for BERT.
 
