@@ -6,7 +6,11 @@ authors = ["Your Name <your_name@example.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.7.1"
+tensorflow = "^2.4.1"
+fastapi = "^0.63.0"
+transformers = "^4.3.2"
+uvicorn = "^0.13.3"
 
 [tool.poetry.scripts]
 adthena_task = "adthena_task.prose:main"
@@ -33,6 +37,10 @@ xdoctest = "^0.15.4"
 Sphinx = "^3.4.3"
 sphinx-autodoc-typehints = "^1.11.1"
 codecov = "^2.1.11"
+nltk = "^3.5"
+pandas = "^1.2.2"
+scikit-learn = "^0.24.1"
+torch = "^1.7.1"
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
 
