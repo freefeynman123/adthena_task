@@ -11,6 +11,8 @@ tensorflow = "^2.4.1"
 fastapi = "^0.63.0"
 transformers = "^4.3.2"
 uvicorn = "^0.13.3"
+pytorch-lightning = "^1.1.8"
+wandb = "^0.10.18"
 
 [tool.poetry.scripts]
 adthena_task = "adthena_task.prose:main"

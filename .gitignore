@@ -1,9 +1,11 @@
 # Custom
-data/
+src/adthena_task/data/
 *.pth
 *.pt
 *.txt
 *.zip
+lightning_logs/
+wandb/
 
 # IDE
 .idea/
