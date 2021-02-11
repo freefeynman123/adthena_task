@@ -1,16 +1,16 @@
 """File containing bert classifier used in the task."""
 
+from dataclasses import dataclass
+
 import torch
 import torch.nn as nn
 from transformers import BertModel
-
-import adthena_task
 
 
 class BertClassifier(nn.Module):
     """Bert classifier with linear output."""
 
-    def __init__(self, config: adthena_task.config, freeze_bert: bool = False) -> None:
+    def __init__(self, config: dataclass, freeze_bert: bool = False) -> None:
         """Init function for bert classifier.
 
         Args:
