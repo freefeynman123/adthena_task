@@ -18,9 +18,7 @@ def create_model() -> torch.nn.Module:
     Returns:
         Model for evaluation.
     """
-    model_path = config.MODEL_PATH
-    model = config.MODEL_EVAL(config)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+    model = config.MODEL_EVAL.load_from_checkpoint(config.MODEL_PATH)
     model.to(device)
     model.eval()
     return model
@@ -62,5 +60,6 @@ def predict(sentence: str) -> dict:
     Returns:
         Dict with label for provided sentence.
     """
-    pred = prediction(sentence)[0]
+    model = create_model()
+    pred = prediction(sentence, model)[0]
     return {"Predicted label": str(pred)}

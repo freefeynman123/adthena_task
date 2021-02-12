@@ -48,8 +48,8 @@ def main():
         monitor="val_loss", min_delta=0.0, patience=5, verbose=True, mode="min"
     )
     model_checkpoint_callback = ModelCheckpoint(
-        dirpath="../eval",
-        filename="{epoch}-{val_loss:.2f}-{other_metric:.2f}",
+        dirpath="../eval/checkpoints",
+        filename="{epoch}-{val_loss:.2f}-{val_acc:.2f}_{val_f1:.2f}",
         monitor="val_loss",
         save_top_k=3,
         save_weights_only=True,

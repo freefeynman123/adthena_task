@@ -3,9 +3,10 @@
 from dataclasses import dataclass
 import os
 
+import pytorch_lightning as pl
 from transformers import BertTokenizer
 
-from adthena_task.models.bert import BertClassifier
+from adthena_task.training.training_module import BertLightningModule
 
 base_path = os.path.dirname(__file__)
 
@@ -26,8 +27,8 @@ class Config:
     BERT_HIDDEN_SIZE: int = 768
     CLASSIFIER_HIDDEN_SIZE: int = 50
     MAX_LEN: int = 30
-    MODEL_EVAL: BertClassifier = BertClassifier
-    MODEL_PATH: str = "epoch_09.pt"
+    MODEL_EVAL: pl.LightningModule = BertLightningModule
+    MODEL_PATH: str = "checkpoints/epoch=0-val_loss=7.25-other_metric=0.00.ckpt"
 
     # Training params
     BATCH_SIZE: int = 32
