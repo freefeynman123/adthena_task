@@ -97,6 +97,7 @@ class BertLightningModule(pl.LightningModule):
         label_pred = torch.argmax(output, dim=-1)
         acc = calculate_accuracy(label_pred, labels)
         f1_score = self.f1_score(label_pred, labels)
+        self.log("val_loss", loss)
         self.val_loss_epoch.append(loss.item())
         self.val_acc_epoch.append(acc.item())
         self.val_f1_epoch.append(f1_score.item())
