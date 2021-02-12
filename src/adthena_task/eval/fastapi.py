@@ -40,7 +40,7 @@ def prediction(text: str, model: torch.nn.Module) -> str:
         text,
         add_special_tokens=True,
         max_length=config.MAX_LEN,
-        pad_to_max_length=True,
+        padding="max_length",
         return_attention_mask=True,
     )
     ids = torch.tensor(encoded["input_ids"], dtype=torch.long).unsqueeze(0)

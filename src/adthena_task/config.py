@@ -27,7 +27,7 @@ class Config:
     MODEL_EVAL: BertClassifier = BertClassifier
     MODEL_PATH: str = "epoch_09.pt"
 
-    BATCH_SIZE: int = 128
+    BATCH_SIZE: int = 32
     GRADIENT_CLIP_VAL: float = 1.0
     SEED: int = 42
     TEST_SIZE: float = 0.5

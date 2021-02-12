@@ -10,12 +10,17 @@ from transformers import BertModel
 class BertClassifier(nn.Module):
     """Bert classifier with linear output."""
 
-    def __init__(self, config: dataclass, freeze_bert: bool = False) -> None:
+    def __init__(self, config: dataclass, num_encoder_layers_to_train: int = 2) -> None:
         """Init function for bert classifier.
+
+        Raises:
+            ValueError in case of num_encoder_layers_to_train higher
+            than length of bert encoding module.
 
         Args:
             config: config file with parameters for given run
-            freeze_bert: whether to freeze BERT backbone.
+            num_encoder_layers_to_train: number of layers from bert encoder
+                                        that are trained. By default we train 2 layers.
         """
         super(BertClassifier, self).__init__()
         D_in, H, D_out = (
@@ -32,8 +37,13 @@ class BertClassifier(nn.Module):
         )
 
         # Freeze the BERT model
-        if freeze_bert:
-            for param in self.bert.parameters():
+        if num_encoder_layers_to_train:
+            if num_encoder_layers_to_train > len(list(self.bert.encoder.layer)):
+                raise ValueError(
+                    "The number of layers to train is higher than number of "
+                    "layers in bert encoder."
+                )
+            for param in self.bert.encoder.layer[:-1].parameters():
                 param.requires_grad = False
 
     def forward(
