@@ -4,6 +4,7 @@ from fastapi import FastAPI
 import torch
 
 from adthena_task.config import Config
+from adthena_task.training.training_module import BertLightningModule
 
 config = Config()
 
@@ -18,7 +19,7 @@ def create_model() -> torch.nn.Module:
     Returns:
         Model for evaluation.
     """
-    model = config.MODEL_EVAL.load_from_checkpoint(config.MODEL_PATH)
+    model = BertLightningModule.load_from_checkpoint(config.MODEL_PATH)
     model.to(device)
     model.eval()
     return model
@@ -46,7 +47,7 @@ def prediction(text: str, model: torch.nn.Module) -> str:
     ids = ids.to(device, dtype=torch.long)
     masks = masks.to(device, dtype=torch.long)
     with torch.no_grad():
-        output = model(input_ids=ids, attention_mask=masks)
+        output = model(ids, masks)
         return torch.argmax(output, dim=-1).cpu().detach().numpy()
 
 
