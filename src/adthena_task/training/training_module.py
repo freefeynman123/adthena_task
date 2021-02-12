@@ -101,7 +101,8 @@ class BertLightningModule(pl.LightningModule):
         self.val_loss_epoch.append(loss.item())
         self.val_acc_epoch.append(acc.item())
         self.val_f1_epoch.append(f1_score.item())
-        return {"val_loss", loss}
+        logs = {"val_loss": loss, "val_acc": acc, "val_f1": f1_score}
+        return {"loss": loss, "val_acc": acc, "log": logs, "progress_bar": logs}
 
     def on_epoch_end(self):
         metrics_to_log = {
