@@ -113,7 +113,7 @@ class BertLightningModule(pl.LightningModule):
             "val_acc_mean": np.mean(self.train_acc_epoch),
             "val_f1_mean": np.mean(self.train_f1_epoch),
         }
-        self.logger.experiment.log_metrics(metrics_to_log, step=self.current_epoch)
+        self.logger.experiment.log(metrics_to_log, step=self.current_epoch)
         # reset for next epoch
         self.f1_score = F1Score()
         self.train_loss_epoch = []
