@@ -14,9 +14,11 @@ base_path = os.path.dirname(__file__)
 class Config:
     """Config file for training and evaluating."""
 
+    # Data location params
     DATA_DIR_TRAIN: str = os.path.join(base_path, "data", "trainSet.csv")
     DATA_DIR_TEST: str = os.path.join(base_path, "data", "candidateTestSet.txt")
 
+    # Model params
     TOKENIZER: BertTokenizer = BertTokenizer.from_pretrained(
         "bert-base-uncased", do_lower_case=True
     )
@@ -27,6 +29,7 @@ class Config:
     MODEL_EVAL: BertClassifier = BertClassifier
     MODEL_PATH: str = "epoch_09.pt"
 
+    # Training params
     BATCH_SIZE: int = 32
     GRADIENT_CLIP_VAL: float = 1.0
     SEED: int = 42

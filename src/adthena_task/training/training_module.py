@@ -2,6 +2,7 @@
 """Implements training class."""
 from argparse import ArgumentParser
 
+import numpy as np
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
@@ -40,6 +41,12 @@ class BertLightningModule(pl.LightningModule):
         else:
             self.loss_function = nn.CrossEntropyLoss()
         self.f1_score = F1Score()
+        self.train_loss_epoch = []
+        self.train_acc_epoch = []
+        self.train_f1_epoch = []
+        self.val_loss_epoch = []
+        self.val_acc_epoch = []
+        self.val_f1_epoch = []
 
     def forward(self, *inputs):
         return self.model(*inputs)
@@ -76,11 +83,12 @@ class BertLightningModule(pl.LightningModule):
         acc = calculate_accuracy(label_pred, labels)
         f1_score = self.f1_score(label_pred, labels)
 
-        self.log("train_loss", loss, on_step=False, on_epoch=True)
-        self.log("train_acc", acc, on_step=False, on_epoch=True)
-        self.log("train_f1", f1_score, on_step=False, on_epoch=True)
+        self.train_loss_epoch.append(loss.item())
+        self.train_acc_epoch.append(acc.item())
+        self.train_f1_epoch.append(f1_score.item())
 
-        return loss
+        logs = {"train_loss": loss, "train_acc": acc, "train_f1": f1_score}
+        return {"loss": loss, "train_acc": acc, "log": logs, "progress_bar": logs}
 
     def validation_step(self, batch, batch_idx):
         b_input_ids, b_attn_mask, labels = batch
@@ -89,10 +97,29 @@ class BertLightningModule(pl.LightningModule):
         label_pred = torch.argmax(output, dim=-1)
         acc = calculate_accuracy(label_pred, labels)
         f1_score = self.f1_score(label_pred, labels)
-        self.log("val_loss", loss, on_step=False, on_epoch=True)
-        self.log("val_acc", acc, on_step=False, on_epoch=True)
-        self.log("val_f1", f1_score, on_step=False, on_epoch=True)
+        self.val_loss_epoch.append(loss.item())
+        self.val_acc_epoch.append(acc.item())
+        self.val_f1_epoch.append(f1_score.item())
         return output
+
+    def on_epoch_end(self):
+        metrics_to_log = {
+            "train_loss_mean": np.mean(self.train_loss_epoch),
+            "train_acc_mean": np.mean(self.train_acc_epoch),
+            "train_f1_mean": np.mean(self.train_f1_epoch),
+            "val_loss_mean": np.mean(self.train_loss_epoch),
+            "val_acc_mean": np.mean(self.train_acc_epoch),
+            "val_f1_mean": np.mean(self.train_f1_epoch),
+        }
+        self.logger.experiment.log_metrics(metrics_to_log, step=self.current_epoch)
+        # reset for next epoch
+        self.f1_score = F1Score()
+        self.train_loss_epoch = []
+        self.train_acc_epoch = []
+        self.train_f1_epoch = []
+        self.val_loss_epoch = []
+        self.val_acc_epoch = []
+        self.val_f1_epoch = []
 
     @staticmethod
     def add_model_specific_args(parent_parser):

@@ -1,5 +1,6 @@
 # flake8: noqa
 from argparse import ArgumentParser
+import datetime
 
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
@@ -12,7 +13,10 @@ from adthena_task.training.training_module import BertLightningModule
 
 config = Config()
 
-wandb_logger = WandbLogger(name="Adam-32-0.001", project="pytorchlightning")
+current_time = datetime.datetime.now()
+wandb_logger = WandbLogger(
+    name=f"bert_{current_time:%Y%m%d%H%M}", project="adthena_task"
+)
 
 
 def parse_args(args=None):
@@ -52,10 +56,11 @@ def main():
     )
 
     trainer = pl.Trainer(
-        gpus=0,
+        gpus=args.gpus,
         callbacks=[early_stop_callback, model_checkpoint_callback],
         gradient_clip_val=config.GRADIENT_CLIP_VAL,
         min_epochs=10,
+        logger=wandb_logger,
     )
 
     dm, model = setup(args)
