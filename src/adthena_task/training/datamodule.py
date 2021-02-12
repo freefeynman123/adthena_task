@@ -7,9 +7,16 @@ from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, Tenso
 
 from adthena_task.config import Config
 from adthena_task.preprocessing.text_preprocessor import preprocessing_for_bert
-from adthena_task.training.utils import get_train_val_split, prepare_data
+from adthena_task.training.utils import (
+    get_train_val_split,
+    prepare_data,
+    prepare_weights,
+)
 
 config = Config()
+
+data = prepare_data()
+weights = torch.Tensor(prepare_weights(data))
 
 
 class AdthenaDataModule(LightningDataModule):
@@ -17,7 +24,6 @@ class AdthenaDataModule(LightningDataModule):
 
     def setup(self) -> None:
         """Setup for training and validation data."""
-        data = prepare_data()
         X_train, X_val, y_train, y_val = get_train_val_split(data)
         X_val, X_test, y_val, y_test = train_test_split(
             X_val, y_val, random_state=config.SEED, test_size=0.5, stratify=y_val
