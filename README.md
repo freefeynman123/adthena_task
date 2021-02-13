@@ -1,9 +1,20 @@
+# How to train
+
+install poetry:
+
+`pip install poetry`
+
+run following commands:
+
+
+
 # adthena_task
 
 1. Description of the model and justification of its usage:
 
-I chose a model from BERT () family, which is considered as a state-of-the-art model in many natural language processing tasks.
-In order to compare the model with some baseline, we chose to perform the comparison in following manner:
+I chose a model from BERT (Biderectional Encoder Representations) family, which is considered as a state-of-the-art model
+in many natural language processing tasks. In order to compare the model with some baseline,
+we chose to perform the comparison in following manner:
 
 * Try some simple, well-established solution (Doc2Vec embeddings + Logistic Regression)
 * Compare it with BERT.
@@ -22,13 +33,23 @@ Testing F1 score: 0.62
 
 BERT with 2 unfrozen encoder layers:
 
+Validation accuracy 0.850
+Validation F1 score: 0.804
+Testing accuracy 0.852
+Testing F1 score: 0.807
+
 The split was done in a 50:25:25 manner, in order to reflect the split that was performed on whole dataset. Justification
 of this fact is presented in EDA.ipynb notebook and comes from found class imbalance.
 
-2. Preprocessing for the BERT model was done in a two-state scenario:
+2. Preprocessing for the BERT model was done in a two-stage scenario:
 
-*
-*
+* Basic preprocessing which consisted of operations such as getting rid of numbers, interpunction and some special symbols
+like ampersand.
+* Utilizing BERT tokenizer with pretrained embedding. Since the whole sentence is considered as a one vector and the hidden
+state of the first token is taken to represent the whole sentence, an additional token must be added, which is usually
+named CLS and placed at the beginning.
+
+Max length of tokens needs to be decided
 
 3. Evaluation was performed with two metrics: accuracy and weighted f1score.
 
