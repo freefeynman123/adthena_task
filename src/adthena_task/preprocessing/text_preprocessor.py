@@ -33,7 +33,7 @@ def text_preprocessing(text: str) -> str:
 
 
 def preprocessing_for_bert(
-    data: pd.DataFrame, tokenizer: BertTokenizer = config.TOKENIZER
+    data: pd.Series, tokenizer: BertTokenizer = config.TOKENIZER
 ) -> Union[torch.Tensor, torch.Tensor]:
     """Preprocessing function for BERT.
 
