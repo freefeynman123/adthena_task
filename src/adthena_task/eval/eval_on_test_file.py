@@ -1,13 +1,23 @@
 # flake8: noqa
 from argparse import ArgumentParser
+import datetime
+import logging
+import time
 
 import pandas as pd
-from torch.utils.data import DataLoader
+import torch
+from torch.utils.data import DataLoader, TensorDataset
 
 from adthena_task.config import Config
 from adthena_task.eval.utils import create_model, prediction
+from adthena_task.utils.timing import timed
+from adthena_task.preprocessing.text_preprocessor import preprocessing_for_bert
 
 config = Config()
+
+logging.basicConfig(filename="eval_on_test_file.log")
+
+current_time = f"{datetime.datetime.now():%Y%m%d%H%M}"
 
 
 def parse_args():
@@ -25,13 +35,25 @@ def eval(args: ArgumentParser):
     Returns:
 
     """
-    data = pd.read_table(args.path_to_test_set).values
-    test_loader = DataLoader(data, batch_size=config.BATCH_SIZE, shuffle=False)
-    model = create_model(args.path_to_checkpoint)
+    logging.info("Reading data")
+    data = pd.read_table(args.path_to_test_set)
+    ids, masks = preprocessing_for_bert(data)
+    dataset = TensorDataset(ids, masks)
+    test_loader = DataLoader(dataset, batch_size=config.BATCH_SIZE, shuffle=False)
+    logging.info("Creating model.")
+    model = timed(lambda: create_model(args.path_to_checkpoint))
     predictions_list = []
-    for examples in test_loader:
-        predictions_list.append(prediction(examples, model))
-    return predictions_list
+    start = time.time()
+    for batch_idx, (examples_ids, examples_masks) in enumerate(test_loader):
+        with torch.no_grad():
+            output = model(examples_ids, examples_masks)
+            predictions = torch.argmax(output, dim=-1).cpu().detach().numpy()
+            predictions_list.extend(predictions)
+    elapsed = time.time() - start
+    logging.info("Prediction took: " + str(elapsed) + " seconds")
+    data["predictions"] = predictions_list
+    logging.info("Writing results to csv.")
+    data.to_csv(f"results_eval_{current_time}.csv")
 
 
 if __name__ == "__main__":
