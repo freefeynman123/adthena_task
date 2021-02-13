@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from adthena_task.config import Config
-from adthena_task.eval.utils import create_model, prediction
+from adthena_task.eval.utils import create_model, device
 from adthena_task.utils.timing import timed
 from adthena_task.preprocessing.text_preprocessor import preprocessing_for_bert
 
@@ -38,11 +38,11 @@ def eval(args: ArgumentParser):
     logging.info("Reading data")
     data = pd.read_table(args.path_to_test_set, header=None)
     data = data.iloc[:, 0]
-    ids, masks = timed(lambda: preprocessing_for_bert(data))
-    dataset = TensorDataset(ids, masks)
+    ids, masks = timed(lambda: preprocessing_for_bert(data), logging)
+    dataset = TensorDataset(ids.to(device), masks.to(device))
     test_loader = DataLoader(dataset, batch_size=config.BATCH_SIZE, shuffle=False)
     logging.info("Creating model.")
-    model = timed(lambda: create_model(args.path_to_checkpoint))
+    model = timed(lambda: create_model(args.path_to_checkpoint), logging)
     predictions_list = []
     start = time.time()
     for batch_idx, (examples_ids, examples_masks) in enumerate(test_loader):
