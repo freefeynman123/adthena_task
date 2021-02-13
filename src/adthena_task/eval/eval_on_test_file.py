@@ -36,8 +36,9 @@ def eval(args: ArgumentParser):
 
     """
     logging.info("Reading data")
-    data = pd.read_table(args.path_to_test_set)
-    ids, masks = preprocessing_for_bert(data)
+    data = pd.read_table(args.path_to_test_set, header=None)
+    data = data.iloc[:, 0]
+    ids, masks = timed(lambda: preprocessing_for_bert(data))
     dataset = TensorDataset(ids, masks)
     test_loader = DataLoader(dataset, batch_size=config.BATCH_SIZE, shuffle=False)
     logging.info("Creating model.")
