@@ -14,9 +14,8 @@ from adthena_task.training.training_module import BertLightningModule
 config = Config()
 
 current_time = datetime.datetime.now()
-wandb_logger = WandbLogger(
-    name=f"bert_{current_time:%Y%m%d%H%M}", project="adthena_task"
-)
+logger_name = f"bert_{current_time:%Y%m%d%H%M}"
+wandb_logger = WandbLogger(name=logger_name, project="adthena_task")
 
 
 def parse_args(args=None):
@@ -48,7 +47,7 @@ def main():
         monitor="val_loss", min_delta=0.0, patience=5, verbose=True, mode="min"
     )
     model_checkpoint_callback = ModelCheckpoint(
-        dirpath="../eval/checkpoints",
+        dirpath=f"../eval/{logger_name}checkpoints",
         filename="{epoch}-{val_loss:.2f}-{val_acc:.2f}_{val_f1:.2f}",
         monitor="val_loss",
         save_top_k=3,
