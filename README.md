@@ -6,7 +6,18 @@ install poetry:
 
 run following commands:
 
+`poetry install
+poetry shell`
 
+to run training:
+
+`python src/adthena_task/training/main.py`
+
+to run evaluation:
+
+`python src/adthena_task/eval/eval_on_test_file.py`
+
+In order to change configuration paths and other hyperparameters you should change `config.py` file
 
 # adthena_task
 
@@ -54,7 +65,8 @@ Max length of tokens needs to be decided
 3. Evaluation was performed with two metrics: accuracy and weighted f1score.
 
 4. The model takes around 15 minutes to train 1 epoch on 1080Ti GPU, so 20 epoch training lasts about 5 hours. In inference
-time on my local
+time on test set with about 60K records it takes around 5 minutes to successfully run the model, however quite a lot of it
+is taken to run preprocessing.
 
 5. Weaknesses:
 
@@ -62,9 +74,6 @@ time on my local
 * Sparsify and prune the model - describe
 * Take into account self-supervised features
 * Add data with similar queries to those found in trainSet.csv, especially for underrepresented classes.
-
-TODO:
-* Eval script for provided .txt file
 
 PLANS:
 * Dockerfile for train and eval
