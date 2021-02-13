@@ -13,7 +13,7 @@ class Config:
     """Config file for training and evaluating."""
 
     # Data location params
-    DATA_DIR_TRAIN: str = os.path.join(base_path, "data", "trainSet.csv")
+    DATA_DIR_TRAIN: str = os.path.join(base_path, "data", "train_600_plus.csv")
     DATA_DIR_TEST: str = os.path.join(base_path, "data", "candidateTestSet.txt")
 
     # Model params

@@ -42,6 +42,8 @@ transformers = "^4.3.2"
 uvicorn = "^0.13.3"
 pytorch-lightning = "^1.1.8"
 wandb = "^0.10.18"
+tensorflow = "^2.4.1"
+matplotlib = "^3.3.4"
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
 
