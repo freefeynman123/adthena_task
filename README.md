@@ -1,4 +1,4 @@
-# How to train
+# How to train and evaluate
 
 install poetry:
 
@@ -17,7 +17,19 @@ to run evaluation:
 
 `python src/adthena_task/eval/eval_on_test_file.py`
 
-In order to change configuration paths and other hyperparameters you should change `config.py` file
+In order to change configuration paths and other hyperparameters you should change `config.py` file.
+Specifically to train on new dataset one should change `DATA_DIR_TRAIN` variable. To evaluate on new dataset one
+should change `DATA_DIR_TEST` variable. By default they are placed in `data` folder, which is ignored in commits.
+
+You can also run evaluation of your custom queries by going to `eval` folder and running fastapi app with:
+
+`uvicorn fast:app --port 9999`
+
+and run the application by going to:
+
+`http://127.0.0.1:9999/docs`
+
+or predict directly from browser by typing `http://127.0.0.1:9999/predict/{sentence}`
 
 # adthena_task
 
@@ -31,25 +43,30 @@ we chose to perform the comparison in following manner:
 * Compare it with BERT.
 
 Since full dataset takes some time to preprocess and train on and due to the fact that LogisticRegression on full embedded
-dataset had diffuculties with convergence, comparison on the custom dataset was performed, which consisted of labels, which
-occured more than 600 times (arbitrary number based on EDA analysis). The results from validation set on those two datasets
-are as followis:
+dataset had difficulties with convergence, comparison on the custom dataset was performed, which consisted of labels, which
+occurred more than 600 times (arbitrary number based on EDA analysis). The results from validation set on those two datasets
+are as follows:
 
 Doc2Vec + Logit :
 
-Validation accuracy 0.618
-Validation F1 score: 0.621
-Testing accuracy 0.619
-Testing F1 score: 0.62
+| Metric      | Value |
+| ----------- | ----------- |
+| Validation accuracy      | 0.618       |
+| Validation F1 score   | 0.621        |
+| Testing accuracy      | 0.619       |
+| Testing F1 score   | 0.620        |
+
 
 BERT with 2 unfrozen encoder layers:
 
-Validation accuracy 0.850
-Validation F1 score: 0.804
-Testing accuracy 0.852
-Testing F1 score: 0.807
+| Metric      | Value |
+| ----------- | ----------- |
+| Validation accuracy      | 0.850       |
+| Validation F1 score   | 0.804        |
+| Testing accuracy      | 0.852       |
+| Testing F1 score   | 0.807        |
 
-The split was done in a 50:25:25 manner, in order to reflect the split that was performed on whole dataset. Justification
+The split was done in a `50:25:25` manner, in order to reflect the split that was performed on whole dataset. Justification
 of this fact is presented in EDA.ipynb notebook and comes from found class imbalance.
 
 2. Preprocessing for the BERT model was done in a two-stage scenario:
