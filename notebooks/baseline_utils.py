@@ -2,7 +2,10 @@
 
 import random
 import string
+from typing import Tuple
 
+import gensim
+from gensim.models.doc2vec import TaggedDocument
 import nltk
 import numpy as np
 from nltk.tokenize import wordpunct_tokenize
@@ -36,10 +39,10 @@ def tokenize_text(text: str) -> str:
     """
     Performs text tokenization
     Args:
-        text:
+        text: Text to be tokenized.
 
     Returns:
-
+        Tokenized text.
     """
     tokens = []
     for sent in nltk.sent_tokenize(text):
@@ -50,16 +53,40 @@ def tokenize_text(text: str) -> str:
     return tokens
 
 
-def create_embedding_matrix(word_index, embedding_dict, dimension):
-    embedding_matrix = np.zeros((len(word_index) + 1, dimension))
+def create_embedding_matrix(
+    word_index: dict, embedding_dict: dict, dimension: int
+) -> np.ndarray:
+    """
+    Creates embedding from indexed words.
+    Args:
+        word_index: Word's indexes.
+        embedding_dict: Embedding which maps given index to mebedding vector.
+        dimension: Dimensionsionality of embedding.
 
+    Returns:
+        Embedding matrix.
+    """
+
+    embedding_matrix = np.zeros((len(word_index) + 1, dimension))
     for word, index in word_index.items():
         if word in embedding_dict:
             embedding_matrix[index] = embedding_dict[word]
     return embedding_matrix
 
 
-def vec_for_learning(model, tagged_docs):
+def vec_for_learning(
+    model: gensim.models,
+    tagged_docs: TaggedDocument,
+) -> Tuple[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+    """
+    Creates data that the model will run on.
+    Args:
+        model: model class from gensim package.
+        tagged_docs: Instance of TaggedDocument class from gensim package.
+
+    Returns:
+        Targets and features used for training the model.
+    """
     sents = tagged_docs.values
     # Reinitializing random value, problem described for example in:
     # https://stackoverflow.com/questions/44443675/removing-randomization-of-vector-initialization-for-doc2vec
