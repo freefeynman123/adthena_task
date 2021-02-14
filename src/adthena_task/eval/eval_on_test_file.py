@@ -56,6 +56,7 @@ def eval(args: ArgumentParser):
     logging.info("Reading data")
     data = pd.read_table(args.path_to_test_set, header=None)
     data = data.iloc[:, 0]
+    data = data.iloc[:3]
     ids, masks = timed(lambda: preprocessing_for_bert(data), logging)
     dataset = TensorDataset(ids.to(device), masks.to(device))
     test_loader = DataLoader(dataset, batch_size=config.BATCH_SIZE, shuffle=False)
@@ -73,7 +74,11 @@ def eval(args: ArgumentParser):
     data = pd.DataFrame(data)
     data["predictions"] = np.array(predictions_list)
     logging.info("Writing results to csv.")
-    data.to_csv(os.path.join(base_path, f"results_eval_{current_time}.csv"))
+    data.to_csv(
+        os.path.join(base_path, f"results_eval_{current_time}.csv"),
+        header=None,
+        index=None,
+    )
 
 
 if __name__ == "__main__":
