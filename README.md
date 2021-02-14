@@ -6,8 +6,9 @@ install poetry:
 
 run following commands:
 
-`poetry install
-poetry shell`
+`poetry install`
+
+`poetry shell`
 
 to run training:
 
@@ -30,16 +31,17 @@ and run the application by going to:
 `http://127.0.0.1:9999/docs`
 
 or predict directly from browser by typing `http://127.0.0.1:9999/predict/{sentence}`
+where `{sentence}` should be replaced with custom text.
 
-# adthena_task
+# Points description
 
-1. Description of the model and justification of its usage:
+1.    Description of the model and justification of its usage:
 
 I chose a model from BERT (Biderectional Encoder Representations) family, which is considered as a state-of-the-art model
-in many natural language processing tasks. In order to compare the model with some baseline,
-we chose to perform the comparison in following manner:
+in many natural language processing tasks. In order to compare it with some baseline,
+the following procedure was chosen:
 
-* Try some simple, well-established solution (Doc2Vec embeddings + Logistic Regression)
+* Try some simple, well-established solution (Doc2Vec embeddings + Logistic Regression).
 * Compare it with BERT.
 
 Since full dataset takes some time to preprocess and train on and due to the fact that LogisticRegression on full embedded
@@ -73,7 +75,7 @@ Moreoever using BERT gives us an access to pretrained embeddings and encoders, a
 which is not possible with custom Doc2Vec embedding, which additionally could be prone to overfitting. Moreoever, Doc2Vec
 has inherent randomness, which can influence reproducibility of results for this dataset.
 
-2. Preprocessing for the BERT model was done in a two-stage scenario:
+<span>2.</span> Preprocessing for the BERT model was done in a two-stage scenario
 
 * Basic preprocessing which consisted of operations such as getting rid of numbers, interpunction and some special symbols
 like ampersand.
@@ -83,27 +85,51 @@ named CLS and placed at the beginning.
 
 Max length of tokens needs to be decided
 
-3. Evaluation was performed with two metrics: accuracy and weighted F1score. First of the mentioned metrics is a standard
-method to obtain performance of our model, which in our case maybe good measure, since there is no single class that dominates the
+<span>3.</span> Methods for evaluation.
+
+Evaluation was performed with two metrics: accuracy and weighted F1score. First of the mentioned metrics is a standard
+method to obtain performance of our model, actually quite well suited in case of our dataset, since there is no single class that dominates the
 rest of the data. Due to the fact that some part of labels are less present in our data, weighed F1 score was used,
-however due to the fact that when one class in completely misclassified, the result is equal to 0, which was the case
-for quite a lot of training and validation epochs. It tells us that there are some harder classes that the problem has problem with
-and it is an issue to address later
+however when one class in completely misclassified, the result is equal to 0, which was the case
+for quite a lot of training and validation epochs. It tells us that there are some harder classes that the model has problem with
+and it is an issue to address later.
 
-4. The model takes around 15 minutes to train 1 epoch on 1080Ti GPU, so 20 epoch training lasts about 5 hours. In inference
+<span>4.</span> Runtime overhead.
+
+The model takes around 15 minutes to train 1 epoch on 1080Ti GPU with 16GB of RAM and 12 CPU cores,
+so 20 epoch training lasts about 5 hours. In inference
 time on test set with about 60K records it takes around 5 minutes to successfully run the model, however quite a lot of it
-is taken to run preprocessing.
+is taken to run preprocessing. In order to see training memory usage and other training metrics you can visit
+Weights and Biases project and System tab for each run that are described later.
 
-5. Weaknesses:
+<span>5.</span> Weaknesses of the model and possible improvements.
 
-* Improving the embedding - describe
-* Sparsify and prune the model - describe
-* Take into account self-supervised features
+Weaknesses:
+
+* The model was trained on 50% of training data only due to imbalanced classes.
+* It may have be too large for given problem, which results in increased time of inference and resources overhead.
+
+Improvements:
+
+* Improving the embedding - take into account specific words that are found in the dataset.
+* Sparsify and prune the model - use frameworks such as rasa https://github.com/RasaHQ/rasa/tree/compressing-bert to
+speed up the inference with similar quality of predictions.
+* Take into account self-supervised features - improvements such as adding self-supervised attention to BERT have shown
+that for example in case of "obvious" sentences the performance is improved (such as in this paper:
+https://arxiv.org/pdf/2004.03808.pdf)
 * Add data with similar queries to those found in trainSet.csv, especially for underrepresented classes.
+* Add tests and Dockerfile to the project.
+* Perform hyperparameter tuning - find optimal parameters such as learning rate or weight decay that are the best for
+given task. It may be accomplished by such frameworks as Weights and Biases sweeps.
 
-PLANS:
-* Dockerfile for train and eval
-* Detailed task description.
-* Unfix some of the hiperparameters.
+## Weights and biases runs
+
+In the link below there are two runs present for BERT model:
+
+https://wandb.ai/freefeynman123/adthena_task?workspace=user-freefeynman123
+
+`bert_600_plus` shows results from training on smaller dataset that was used as a baseline comparison.
+`bert_full_data` shows results of training on full data.
+
 
 Project adthena_task initialized with `prose`.
