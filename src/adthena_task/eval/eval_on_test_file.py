@@ -16,9 +16,14 @@ from adthena_task.preprocessing.text_preprocessor import preprocessing_for_bert
 
 config = Config()
 
-logging.basicConfig(filename="eval_on_test_file.log")
-logger = logging.getLogger()
-logger.addHandler(logging.StreamHandler())
+logging.basicConfig(
+    handlers=[
+        logging.FileHandler(filename="log_records.txt", encoding="utf-8", mode="a+")
+    ],
+    format="%(asctime)s %(name)s:%(levelname)s:%(message)s",
+    datefmt="%F %A %T",
+    level=logging.INFO,
+)
 
 current_time = f"{datetime.datetime.now():%Y%m%d%H%M}"
 
@@ -33,14 +38,16 @@ def parse_args():
 def eval(args: ArgumentParser):
     """Evaluation function on new data in txt format.
     Args:
-        args:
+        args: arguments for given run.
 
     Returns:
+        None, saves results to csv file.
 
     """
     logging.info("Reading data")
     data = pd.read_table(args.path_to_test_set, header=None)
     data = data.iloc[:, 0]
+    data = data.iloc[:3]
     ids, masks = timed(lambda: preprocessing_for_bert(data), logging)
     dataset = TensorDataset(ids.to(device), masks.to(device))
     test_loader = DataLoader(dataset, batch_size=config.BATCH_SIZE, shuffle=False)
@@ -54,7 +61,7 @@ def eval(args: ArgumentParser):
             predictions = torch.argmax(output, dim=-1).cpu().detach().numpy()
             predictions_list.extend(predictions)
     elapsed = time.time() - start
-    logging.info("Prediction took: " + str(elapsed) + " seconds")
+    logging.info(f"Prediction took: {elapsed:0.3f} seconds")
     data = pd.DataFrame(data)
     data["predictions"] = np.array(predictions_list)
     logging.info("Writing results to csv.")

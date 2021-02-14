@@ -20,5 +20,5 @@ def timed(f: Callable, logger: logging) -> Any:
     ret = f()
     elapsed = time.time() - start
     source_code = inspect.getsource(f).strip("\n")
-    logger.info(source_code + ":  " + str(elapsed) + " seconds")
+    logger.info(f"{source_code}: {elapsed:0.3f} seconds")
     return ret
