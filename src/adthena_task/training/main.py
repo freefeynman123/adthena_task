@@ -36,10 +36,9 @@ def setup(args):
 
 
 def main():
-    n_gpus = torch.cuda.device_count()
     mocked_args = f"""
         --max_epochs 10
-        --gpus {n_gpus}""".split()
+        --gpus -1""".split()
 
     args = parse_args(mocked_args)
 
