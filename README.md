@@ -69,6 +69,10 @@ BERT with 2 unfrozen encoder layers:
 The split was done in a `50:25:25` manner, in order to reflect the split that was performed on whole dataset. Justification
 of this fact is presented in EDA.ipynb notebook and comes from found class imbalance.
 
+Moreoever using BERT gives us an access to pretrained embeddings and encoders, allowing us to perform transfer learning,
+which is not possible with custom Doc2Vec embedding, which additionally could be prone to overfitting. Moreoever, Doc2Vec
+has inherent randomness, which can influence reproducibility of results for this dataset.
+
 2. Preprocessing for the BERT model was done in a two-stage scenario:
 
 * Basic preprocessing which consisted of operations such as getting rid of numbers, interpunction and some special symbols
@@ -79,7 +83,12 @@ named CLS and placed at the beginning.
 
 Max length of tokens needs to be decided
 
-3. Evaluation was performed with two metrics: accuracy and weighted f1score.
+3. Evaluation was performed with two metrics: accuracy and weighted F1score. First of the mentioned metrics is a standard
+method to obtain performance of our model, which in our case maybe good measure, since there is no single class that dominates the
+rest of the data. Due to the fact that some part of labels are less present in our data, weighed F1 score was used,
+however due to the fact that when one class in completely misclassified, the result is equal to 0, which was the case
+for quite a lot of training and validation epochs. It tells us that there are some harder classes that the problem has problem with
+and it is an issue to address later
 
 4. The model takes around 15 minutes to train 1 epoch on 1080Ti GPU, so 20 epoch training lasts about 5 hours. In inference
 time on test set with about 60K records it takes around 5 minutes to successfully run the model, however quite a lot of it
