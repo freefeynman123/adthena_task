@@ -21,6 +21,8 @@ to run evaluation:
 In order to change configuration paths and other hyperparameters you should change `config.py` file.
 Specifically to train on new dataset one should change `DATA_DIR_TRAIN` variable. To evaluate on new dataset one
 should change `DATA_DIR_TEST` variable. By default they are placed in `data` folder, which is ignored in commits.
+By default checkpoints are saved in `eval` folder, path to the checkpoint that should be used during evaluation can
+also be changed in `config.py` file.
 
 You can also run evaluation of your custom queries by going to `eval` folder and running fastapi app with:
 

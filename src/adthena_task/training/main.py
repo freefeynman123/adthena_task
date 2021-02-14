@@ -1,6 +1,7 @@
 # flake8: noqa
 from argparse import ArgumentParser
 import datetime
+import os
 
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
@@ -36,9 +37,10 @@ def setup(args):
 
 
 def main():
+    n_gpus = torch.cuda.device_count()
     mocked_args = f"""
         --max_epochs 10
-        --gpus -1""".split()
+        --gpus {n_gpus}""".split()
 
     args = parse_args(mocked_args)
 
@@ -46,7 +48,9 @@ def main():
         monitor="val_loss", min_delta=0.0, patience=5, verbose=True, mode="min"
     )
     model_checkpoint_callback = ModelCheckpoint(
-        dirpath=f"../eval/{logger_name}checkpoints",
+        dirpath=os.path.join(
+            os.path.dirname(__file__), f"../eval/checkpoints/{logger_name}"
+        ),
         filename="{epoch}-{val_loss:.2f}-{val_acc:.2f}_{val_f1:.2f}",
         monitor="val_loss",
         save_top_k=3,
