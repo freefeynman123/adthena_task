@@ -50,7 +50,7 @@ def prepare_weights(data: pd.DataFrame) -> np.ndarray:
 
 def get_train_val_split(
     data: pd.DataFrame, test_size: float = config.TEST_SIZE
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+) -> Tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
     """Prepares train test split for main dataframe.
 
     Args:
