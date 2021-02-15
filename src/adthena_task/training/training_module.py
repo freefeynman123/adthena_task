@@ -27,7 +27,7 @@ class BertLightningModule(pl.LightningModule):
         adam_epsilon: float = 1e-8,
         warmup_steps: int = 0,
         min_epochs: int = 5,
-        num_encoder_layers_to_train: int = 2,
+        num_encoder_layers_to_train: int = 1,
         batch_size=config.BATCH_SIZE,
     ):
         super(BertLightningModule, self).__init__()
@@ -132,5 +132,5 @@ class BertLightningModule(pl.LightningModule):
         parser.add_argument("--learning_rate", default=1e-5, type=float)
         parser.add_argument("--adam_epsilon", default=1e-8, type=float)
         parser.add_argument("--warmup_steps", default=0, type=int)
-        parser.add_argument("--num_encoder_layers_to_train", default=2, type=int)
+        parser.add_argument("--num_encoder_layers_to_train", default=1, type=int)
         return parser
