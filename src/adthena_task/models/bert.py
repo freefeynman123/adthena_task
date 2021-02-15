@@ -10,7 +10,7 @@ from transformers import BertModel
 class BertClassifier(nn.Module):
     """Bert classifier with linear output."""
 
-    def __init__(self, config: dataclass, num_encoder_layers_to_train: int = 2) -> None:
+    def __init__(self, config: dataclass, num_encoder_layers_to_train: int = 1) -> None:
         """Init function for bert classifier.
 
         Raises:
@@ -20,7 +20,7 @@ class BertClassifier(nn.Module):
         Args:
             config: config file with parameters for given run
             num_encoder_layers_to_train: number of layers from bert encoder
-                                        that are trained. By default we train 2 layers.
+                                        that are trained. By default we train 1 layer.
         """
         super(BertClassifier, self).__init__()
         D_in, H, D_out = (
@@ -43,7 +43,9 @@ class BertClassifier(nn.Module):
                     "The number of layers to train is higher than number of "
                     "layers in bert encoder."
                 )
-            for param in self.bert.encoder.layer[:-1].parameters():
+            for param in self.bert.encoder.layer[
+                :-num_encoder_layers_to_train
+            ].parameters():
                 param.requires_grad = False
 
     def forward(
